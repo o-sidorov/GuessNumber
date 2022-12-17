@@ -62,7 +62,7 @@ if __name__ == '__main__':
         return '0'*(length-len(num)) + num 
     
     cnt = 10000
-    lo, hi = 1, 100000
+    lo, hi = 1, 10000
     random.seed(1)
     num_of_tries = [guess_number(random.randint(lo, hi+1), lo, hi) 
                     for i in range(cnt)]
