@@ -11,7 +11,7 @@ We just want to know how many tries Computer will take.
 """
 
         
-def guess_number(number: int, lo: int=1, hi: int=100, use_bnr_srch: bool=False) -> int:
+def guess_number(number: int, lo: int=1, hi: int=100, binary_search: bool=False) -> int:
     """
     In this version of the game Computer will use randint() function
     to guess hidden number.
@@ -22,7 +22,7 @@ def guess_number(number: int, lo: int=1, hi: int=100, use_bnr_srch: bool=False) 
         Defaults to 1.
         hi (int, optional): higher bound of the range the number should belong to. 
         Defaults to 100.
-        use_bnr_srch (bool, optional): if True binary search algorythm will be used
+        binary_search (bool, optional): if True binary search algorythm will be used
         to find out the number, othervice Computer will use randint() function.
         Defaults to False.
 
@@ -41,7 +41,7 @@ def guess_number(number: int, lo: int=1, hi: int=100, use_bnr_srch: bool=False) 
     # Now let Computer guess the number
     count = 1
     while True:
-        if use_bnr_srch:
+        if binary_search:
             guess = (lo+hi) // 2
         else:
             guess = random.randint(lo, hi+1)
@@ -53,7 +53,14 @@ def guess_number(number: int, lo: int=1, hi: int=100, use_bnr_srch: bool=False) 
         else:
             hi = guess-1
         count += 1
- 
+
+
+def collect_result(func, args_lst: list, key_arg: int, count: int=1) -> list:
+    res_lst = []
+    for args in args_lst:
+        res_lst.append((args[key_arg], func(*args)))
+    return res_lst
+        
      
 if __name__ == '__main__':
     
@@ -61,10 +68,10 @@ if __name__ == '__main__':
         num = str(num)
         return '0'*(length-len(num)) + num 
     
-    cnt = 10000
-    lo, hi = 1, 10000
-    random.seed(1)
-    num_of_tries = [guess_number(random.randint(lo, hi+1), lo, hi) 
+    cnt = 1000
+    lo, hi = 1, 1000000
+    #random.seed(1)
+    num_of_tries = [guess_number(random.randint(lo, hi+1), lo, hi, True) 
                     for i in range(cnt)]
     avrg_tries = round(mean(num_of_tries))
     best_tries = min(num_of_tries)
@@ -78,4 +85,12 @@ if __name__ == '__main__':
             fix_len_num(item[1], 4), 
             ('=' if item[0] == avrg_tries else '-') * round(item[1]/max_try_val*30)
             )
-            
+    
+    args_lst = [
+        (random.randint(1,101), 1, 100, True),
+        (random.randint(1,1001), 1, 1000, True),
+        (random.randint(1,10001), 1, 10000, True),
+        (random.randint(1,100001), 1, 100000, True),
+        (random.randint(1,1000001), 1, 1000000, True)
+    ]
+    print(collect_result(guess_number, args_lst, 2))
