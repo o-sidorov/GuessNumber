@@ -11,18 +11,20 @@ We just want to know how many tries Computer will take.
 """
 
         
-def guess_number(number: int, lo: int=1, hi: int=100, binary_search: bool=False) -> int:
+def guess_number(lo: int=1, hi: int=100, number: int=None, bnr_srch: bool=False) -> int:
     """
-    In this version of the game Computer will use randint() function
-    to guess hidden number.
+    Computer will will try to guess hidden number.
+    It has got unlimited tries. 
+    The question is how many tries will it use to find out the number
     
     Args:
-        number (int): gessed number.
         lo (int, optional): lower bound of the range the number should belong to. 
         Defaults to 1.
         hi (int, optional): higher bound of the range the number should belong to. 
         Defaults to 100.
-        binary_search (bool, optional): if True binary search algorythm will be used
+        number (int): gessed number.
+        Defaults to None (randint(lo, hi+1) will give the number in this case)
+        bnr_srch (bool, optional): if True binary search algorythm will be used
         to find out the number, othervice Computer will use randint() function.
         Defaults to False.
 
@@ -31,17 +33,21 @@ def guess_number(number: int, lo: int=1, hi: int=100, binary_search: bool=False)
     """
     
     # Check arguments values:
-    # All three arguments type should be int
-    if not (type(number) == int and type(lo) == int and type(hi) == int):
+    # lo, hi – int; number – None or int
+    if not ((number == None or type(number) == int) and type(lo) == int and type(hi) == int):
         raise ValueError("number, lo, hi values should be integer")
+    if lo > hi:
+        raise ValueError("lo should be less than hi")
+    if not number:
+        number = random.randint(lo, hi+1)
     # number value should be in range [lo, hi]
     if not lo <= number <= hi:
-        raise ValueError("Number to guess should be in range from lo to hi")
+        raise ValueError("number should be in range from lo to hi")
     
     # Now let Computer guess the number
     count = 1
     while True:
-        if binary_search:
+        if bnr_srch:
             guess = (lo+hi) // 2
         else:
             guess = random.randint(lo, hi+1)
@@ -68,11 +74,10 @@ if __name__ == '__main__':
         num = str(num)
         return '0'*(length-len(num)) + num 
     
-    cnt = 1000
-    lo, hi = 1, 1000000
+    cnt = 1000000
+    lo, hi = 1, 100
     #random.seed(1)
-    num_of_tries = [guess_number(random.randint(lo, hi+1), lo, hi, True) 
-                    for i in range(cnt)]
+    num_of_tries = [guess_number(lo, hi) for i in range(cnt)]
     avrg_tries = round(mean(num_of_tries))
     best_tries = min(num_of_tries)
     worst_tries = max(num_of_tries)
@@ -82,15 +87,6 @@ if __name__ == '__main__':
     for item in tries.items():
         print(
             fix_len_num(item[0], 2), '-',
-            fix_len_num(item[1], 4), 
+            fix_len_num(item[1], 6), 
             ('=' if item[0] == avrg_tries else '-') * round(item[1]/max_try_val*30)
             )
-    
-    args_lst = [
-        (random.randint(1,101), 1, 100, True),
-        (random.randint(1,1001), 1, 1000, True),
-        (random.randint(1,10001), 1, 10000, True),
-        (random.randint(1,100001), 1, 100000, True),
-        (random.randint(1,1000001), 1, 1000000, True)
-    ]
-    print(collect_result(guess_number, args_lst, 2))
