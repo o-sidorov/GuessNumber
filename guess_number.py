@@ -1,7 +1,7 @@
 from numpy import random, mean
 
 """
-Let's play game in which Computer have to find out the number we have guessed.
+Let's play game in which Computer finds out the number we have guessed.
 Initially Computer knows the lower and the higher bounds of the range 
 hidden number belongs to.
 After every wrong try Computer will be told if predicted number 
@@ -13,7 +13,7 @@ We just want to know how many tries Computer will take.
         
 def guess_number(lo: int=1, hi: int=100, number: int=None, bnr_srch: bool=False) -> int:
     """
-    Computer will will try to guess hidden number.
+    Computer will try to guess hidden number.
     It has got unlimited tries. 
     The question is how many tries will it use to find out the number
     
@@ -37,7 +37,7 @@ def guess_number(lo: int=1, hi: int=100, number: int=None, bnr_srch: bool=False)
     if not ((number == None or type(number) == int) and type(lo) == int and type(hi) == int):
         raise ValueError("number, lo, hi values should be integer")
     if lo > hi:
-        raise ValueError("lo should be less than hi")
+        raise ValueError("lo can't be more than hi")
     if not number:
         number = random.randint(lo, hi+1)
     # number value should be in range [lo, hi]
@@ -74,10 +74,21 @@ if __name__ == '__main__':
         num = str(num)
         return '0'*(length-len(num)) + num 
     
-    cnt = 1000000
-    lo, hi = 1, 100
+    def average_result_wrapper(func, repeat=100000):
+        def decorator(func):
+            def dec_func(*args, **kwargs):
+                results = [func(*args, **kwargs) for i in range(repeat)]
+                return mean(results)
+            return dec_func
+        return decorator(func)
+    
+    guess_number = average_result_wrapper(guess_number)
+    for hi in (100, 1000, 10000, 100000, 1000000):
+        print(round(guess_number(1, hi, bnr_srch=True),2))
+    '''cnt = 10000
+    lo, hi = 1, 1000
     #random.seed(1)
-    num_of_tries = [guess_number(lo, hi) for i in range(cnt)]
+    num_of_tries = [guess_number(lo, hi, bnr_srch=True) for i in range(cnt)]
     avrg_tries = round(mean(num_of_tries))
     best_tries = min(num_of_tries)
     worst_tries = max(num_of_tries)
@@ -90,3 +101,4 @@ if __name__ == '__main__':
             fix_len_num(item[1], 6), 
             ('=' if item[0] == avrg_tries else '-') * round(item[1]/max_try_val*30)
             )
+    '''
