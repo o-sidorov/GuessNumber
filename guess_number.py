@@ -2,7 +2,7 @@ from numpy import random, mean
 
 """
 Let's play game in which Computer finds out the number we have guessed.
-Initially Computer knows the lower and the higher bounds of the range 
+Initially Computer knows the lower and the upper bounds of the range 
 hidden number belongs to.
 After every wrong try Computer will be told if predicted number 
 is more or less than the one we made.
@@ -74,31 +74,36 @@ if __name__ == '__main__':
         num = str(num)
         return '0'*(length-len(num)) + num 
     
-    def average_result_wrapper(func, repeat=100000):
+    def average_int_result(func, repeat=10000, print_chart=False):
+        """Decorator for 
+
+        Args:
+            func (_type_): _description_
+            repeat (int, optional): _description_. Defaults to 10000.
+            print_chart (bool, optional): _description_. Defaults to False.
+        """
         def decorator(func):
             def dec_func(*args, **kwargs):
                 results = [func(*args, **kwargs) for i in range(repeat)]
-                return mean(results)
+                avrg_res = round(mean(results))
+                
+                if print_chart:
+                    # Printing a simple chart in terminal
+                    min_res = min(results) # lower bound
+                    max_res = max(results) # upper bound
+                    results = {i: results.count(i)
+                               for i in range(min_res, max_res+1)}
+                    for result in results.items():
+                        max_val = max(results.values())
+                        print(fix_len_num(result[0], 2), '-',
+                              fix_len_num(result[1], 6), 
+                              ('=' if result[0] == avrg_res else '-') 
+                              * round(result[1]/max_val*30)) 
+                return avrg_res
             return dec_func
         return decorator(func)
     
-    guess_number = average_result_wrapper(guess_number)
-    for hi in (100, 1000, 10000, 100000, 1000000):
-        print(round(guess_number(1, hi, bnr_srch=True),2))
-    '''cnt = 10000
-    lo, hi = 1, 1000
-    #random.seed(1)
-    num_of_tries = [guess_number(lo, hi, bnr_srch=True) for i in range(cnt)]
-    avrg_tries = round(mean(num_of_tries))
-    best_tries = min(num_of_tries)
-    worst_tries = max(num_of_tries)
-    tries = {i: num_of_tries.count(i) 
-            for i in range(best_tries, worst_tries+1)}
-    max_try_val = max(tries.values())
-    for item in tries.items():
-        print(
-            fix_len_num(item[0], 2), '-',
-            fix_len_num(item[1], 6), 
-            ('=' if item[0] == avrg_tries else '-') * round(item[1]/max_try_val*30)
-            )
-    '''
+    guess_number = average_int_result(guess_number, print_chart=True)
+    for hi in [10**i for i in range(2,6)]:
+        print(f"\n1 <= number <= {hi}")
+        print(f"Average number of tries is {guess_number(1, hi, bnr_srch=True)}")
