@@ -69,10 +69,11 @@ if __name__ == '__main__':
         return '0'*(length-len(num)) + num
 
     def print_tabs(*args, tabs: tuple=None):
-        for arg in args:
-            print(arg)
+        for arg, tab in zip(args, tabs):
+            print(arg, ' '*(tab-len(str(arg))), sep='', end='')
+        print()
 
-    def average_int_result(func, repeat=1000, print_chart=False):
+    def average_int_result(func, repeat=10000, print_chart=False):
         """Decorator for 
 
         Args:
@@ -96,17 +97,20 @@ if __name__ == '__main__':
                                 for i in range(min_res, max_res+1)}
                     max_val = max(results.values()) # count of the most frequent result
                     for result in results.items():
-                        print(fix_len_num(result[0], 2), '-',
+                        print_tabs(result[0], '-', result[1], 
+                                   ('=' if result[0] == avrg_res else '-') 
+                                   * round(result[1]/max_val*30),
+                                   tabs=(3,2,5,0))
+                        '''print(fix_len_num(result[0], 2), '-',
                                 fix_len_num(result[1], 4), 
                                 ('=' if result[0] == avrg_res else '-') 
-                                * round(result[1]/max_val*30)) 
+                                * round(result[1]/max_val*30)) '''
                 return avrg_res
             return dec_func
         return decorator(func)
     
     guess_number = average_int_result(guess_number, print_chart=True)
-    for hi in [10**i for i in range(2,5)]:
-        print(f"\n1 <= number <= {hi}")
-        print(f"Average number of tries is {guess_number(1, hi, bnr_srch=True)}")
-
+    for hi in [10**i for i in range(2,6)]:
+        print(f"\n[1; {hi}]")
+        print(f"Average number of tries is {guess_number(1, hi, bnr_srch=False)}")
 
