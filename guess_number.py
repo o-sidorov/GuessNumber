@@ -59,3 +59,54 @@ def guess_number(lo: int=1, hi: int=100, number: int=None, bnr_srch: bool=False)
         else:
             hi = guess-1
         count += 1
+
+if __name__ == '__main__':
+    from guess_number import guess_number
+    from numpy import random, mean
+
+    def fix_len_num(num: int, length: int) -> str:
+        num = str(num)
+        return '0'*(length-len(num)) + num
+
+    def print_tabs(*args, tabs: tuple=None):
+        for arg in args:
+            print(arg)
+
+    def average_int_result(func, repeat=1000, print_chart=False):
+        """Decorator for 
+
+        Args:
+            func (_type_): _description_
+            repeat (int, optional): _description_. Defaults to 10000.
+            print_chart (bool, optional): _description_. Defaults to False.
+        """
+        def decorator(func):
+            def dec_func(*args, **kwargs):
+                results = [func(*args, **kwargs) for i in range(repeat)]
+                avrg_res = round(mean(results))
+                
+                if print_chart:
+                    # Printing a simple chart
+                    min_res = min(results) # lower bound of chart value axis
+                    max_res = max(results) # upper bound of chart value axis
+                    # Creating a dictionary:
+                    # keys are results returned by func();
+                    # values are numbers of times each result was returned.
+                    results = {i: results.count(i)
+                                for i in range(min_res, max_res+1)}
+                    max_val = max(results.values()) # count of the most frequent result
+                    for result in results.items():
+                        print(fix_len_num(result[0], 2), '-',
+                                fix_len_num(result[1], 4), 
+                                ('=' if result[0] == avrg_res else '-') 
+                                * round(result[1]/max_val*30)) 
+                return avrg_res
+            return dec_func
+        return decorator(func)
+    
+    guess_number = average_int_result(guess_number, print_chart=True)
+    for hi in [10**i for i in range(2,5)]:
+        print(f"\n1 <= number <= {hi}")
+        print(f"Average number of tries is {guess_number(1, hi, bnr_srch=True)}")
+
+
