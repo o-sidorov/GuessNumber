@@ -7,14 +7,14 @@ hidden number belongs to.
 After every wrong try Computer will be told if predicted number 
 is more or less than the one we made.
 Thanks to game rules Computer has unlimited tries so it has no chance to loose. 
-We just want to know how many tries Computer will take.
+The ustion is how many tries Computer will take.
 """
 
 def guess_number(lo: int=1, hi: int=100, number: int=None, bnr_srch: bool=True) -> int:
     """
     Computer will try to guess hidden number.
     It has got unlimited tries. 
-    The question is how many tries will it use to find out the number
+    The result is how many tries will it use to find out the number
     
     Args:
         lo (int, optional): lower bound of the range the number should belong to. 
@@ -24,8 +24,8 @@ def guess_number(lo: int=1, hi: int=100, number: int=None, bnr_srch: bool=True) 
         number (int): gessed number.
         Defaults to None (randint(lo, hi+1) will give the number in this case)
         bnr_srch (bool, optional): if True binary search algorythm will be used
-        to find out the number, othervice Computer will use randint() function.
-        Defaults to False.
+        to search the number, othervice Computer will use randint() function.
+        Defaults to True.
 
     Returns:
         int: number of tries Computer have used to guess the number.
@@ -58,39 +58,3 @@ def guess_number(lo: int=1, hi: int=100, number: int=None, bnr_srch: bool=True) 
         else:
             hi = guess-1
         count += 1
-
-
-if __name__ == '__main__':
-
-    from math import ceil
-
-    def average_int_result(func, repeat: int=1000, print_chart: bool=True, bar_len: int=35):
-        def dec_func(*args, **kwargs):
-            results = [func(*args, **kwargs) for i in range(repeat)]
-            avrg_res = round(mean(results))
-            
-            if print_chart:
-                # Printing a simple chart
-                min_res = min(results) # lower bound of chart value axis
-                max_res = max(results) # upper bound of chart value axis
-                # Creating a dictionary:
-                # keys are results returned by func();
-                # values are numbers of times each result was returned.
-                results = {i: results.count(i) 
-                            for i in range(min_res, max_res+1)}
-                max_val = max(results.values()) # count of the most frequent result
-                
-                for result in results.items():
-                    if result[1]:
-                        chart_ch = '=' if result[0] == avrg_res else '-'
-                        indent = ' '*(len(str(max_res)) - len(str(result[0])))
-                        chart_bar = indent + chart_ch * ceil(result[1]/max_val * bar_len)
-                        print(result[0], chart_bar, f"{result[1]} times")
-                    
-            return avrg_res
-        return dec_func
-    
-    guess_number = average_int_result(guess_number)
-    for hi in [10**i for i in range(1,6)]:
-        print(f"\n[1; {hi}]")
-        print(f"Average number of tries is {guess_number(1, hi)}")
