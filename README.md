@@ -8,5 +8,3 @@ Thanks to game rules Computer has unlimited tries so it has no chance to loose.
 The result is how many tries Computer will take.
 
 Game algorythm is placed in the only function – guess_number()
-
-
