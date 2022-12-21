@@ -7,14 +7,14 @@ hidden number belongs to.
 After every wrong try Computer will be told if predicted number 
 is more or less than the one we made.
 Thanks to game rules Computer has unlimited tries so it has no chance to loose. 
-The ustion is how many tries Computer will take.
+The question is how many tries Computer will take.
 """
 
 def guess_number(lo: int=1, hi: int=100, number: int=None, bnr_srch: bool=True) -> int:
     """
     Computer will try to guess hidden number.
     It has got unlimited tries. 
-    The result is how many tries will it use to find out the number
+    The result is the number tries it will use to find out the number
     
     Args:
         lo (int, optional): lower bound of the range the number should belong to. 
